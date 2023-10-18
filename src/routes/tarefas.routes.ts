@@ -5,8 +5,9 @@ const tarefasRoutes = Router();
 
 const tarefasController = new TarefaController();
 
-tarefasRoutes.post("/tarefas", tarefasController.criarTarefa);
-tarefasRoutes.get("/tarefas", tarefasController.obterTarefa);
-tarefasRoutes.put("/tarefas/:id", tarefasController.atualizarTarefa);
+tarefasRoutes.post("/", tarefasController.criarTarefa);
+tarefasRoutes.get("/", tarefasController.obterTarefa);
+tarefasRoutes.put("/:id", tarefasController.atualizarTarefa);
+tarefasRoutes.delete("/:id", tarefasController.excluirTarefa);
 
 export default tarefasRoutes;

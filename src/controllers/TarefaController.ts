@@ -34,6 +34,19 @@ class TarefaController {
       return res.status(500).json({ error: "Erro ao atualizar tarefa." });
     }
   }
+
+  async excluirTarefa(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const tarefaExcluida = await Tarefa.findByIdAndDelete(id);
+      if (!tarefaExcluida) {
+        return res.status(404).json({ error: "Tarefa não encontrada." });
+      }
+      return res.status(200).json({ message: "Tarefa excluida com sucesso" });
+    } catch (error) {
+      return res.status(500).json({ error: "Erro ao excluir a tarefa" });
+    }
+  }
 }
 
 export default TarefaController;
