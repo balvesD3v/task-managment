@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "target": "ESNext",
+    "module": "CommonJS",
+    "types": ["node", "express"],
+    "outDir": "./dist", // Diretório para os arquivos compilados
+    "rootDir": "./src", // Diretório raiz do seu código TypeScript
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*.ts", "src/routes.ts"],
+  "exclude": ["node_modules"]
+}
