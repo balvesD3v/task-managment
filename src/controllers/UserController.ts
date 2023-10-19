@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import User from "../models/Users";
-import { hash } from "bcrypt";
+import { hash, compare } from "bcrypt";
 
 class UserController {
   async criarUsuario(req: Request, res: Response) {
     const { name, email, password } = req.body;
 
-    const hashedpassword = await hash(password, 8);
+    const hashedpassword = await hash(password, 10);
 
     try {
       const checkUserExists = await User.findOne({ email: email });
@@ -30,27 +30,48 @@ class UserController {
   }
 
   async atualizarUsuario(req: Request, res: Response) {
-    const { name, email, password, oldPassword } = req.body;
+    const { email, newName, newEmail, newPassword } = req.body;
 
     try {
       const user = await User.findOne({ email: email });
+
       if (!user) {
-        return res.status(500).json({ message: "Usuário não encontrado" });
+        return res.status(404).json({ message: "Usuário não existe" });
       }
 
-      const emailExists = await User.findOne({ email: email });
-      if (emailExists) {
-        return res.status(400).json({ message: "Esse email já existe" });
-      } else {
-        return res
-          .status(200)
-          .json({ message: "Sucesso ao atualizar o email" });
+      if (newName) {
+        user.name = newName;
       }
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ error: "Não foi possivel atualizar o usuário" });
-    }
+
+      if (newEmail) {
+        const emailExists = await User.findOne({ email: email });
+        if (emailExists && emailExists._id.toString() !== user._id.toString()) {
+          return res.status(404).json({ message: "Esté email já está em uso" });
+        }
+        user.email = newEmail;
+      }
+
+      if (newEmail === user.email) {
+        return res.status(404).json({ message: "Email identicos" });
+      }
+
+      if (newPassword) {
+        const passwordMatched = await compare(newPassword, user.password);
+        if (passwordMatched) {
+          return res
+            .status(400)
+            .json({ message: "Nova senha não pode ser igual à senha atual" });
+        }
+        const hashedpassword = await hash(newPassword, 10);
+        user.password = hashedpassword;
+      }
+
+      await user.save();
+
+      return res.status(200).json({
+        message: `${newEmail}  ${newPassword}  ${newName}  ${email}  "Usuário atualizado com sucesso"`,
+      });
+    } catch (error) {}
   }
 }
 
