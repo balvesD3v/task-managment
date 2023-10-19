@@ -3,7 +3,7 @@ import User from "../models/Users";
 import { hash, compare } from "bcrypt";
 
 class UserController {
-  async criarUsuario(req: Request, res: Response) {
+  async createUser(req: Request, res: Response) {
     const { name, email, password } = req.body;
 
     const hashedpassword = await hash(password, 10);
@@ -29,14 +29,14 @@ class UserController {
     }
   }
 
-  async atualizarUsuario(req: Request, res: Response) {
+  async updateUser(req: Request, res: Response) {
     const { email, newName, newEmail, newPassword } = req.body;
 
     try {
       const user = await User.findOne({ email: email });
 
       if (!user) {
-        return res.status(404).json({ message: "Usuário não existe" });
+        return res.status(400).json({ message: "Usuário não existe" });
       }
 
       if (newName) {
@@ -46,13 +46,15 @@ class UserController {
       if (newEmail) {
         const emailExists = await User.findOne({ email: email });
         if (emailExists && emailExists._id.toString() !== user._id.toString()) {
-          return res.status(404).json({ message: "Esté email já está em uso" });
+          return res.status(400).json({ message: "Esté email já está em uso" });
         }
         user.email = newEmail;
       }
 
       if (newEmail === user.email) {
-        return res.status(404).json({ message: "Email identicos" });
+        return res.status(400).json({
+          message: "O novo e-mail deve ser diferente do e-mail atual",
+        });
       }
 
       if (newPassword) {

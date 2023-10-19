@@ -1,45 +1,45 @@
 import { Request, Response } from "express";
-import Tarefa from "../models/Tarefa";
+import Task from "../models/Task";
 
-class TarefaController {
-  async criarTarefa(req: Request, res: Response) {
+class TaskController {
+  async createTask(req: Request, res: Response) {
     try {
-      const novaTarefa = await Tarefa.create(req.body);
-      return res.status(201).json(novaTarefa);
+      const newTask = await Task.create(req.body);
+      return res.status(201).json(newTask);
     } catch (error) {
       return res.status(500).json({ error: "Erro ao criar tarefa." });
     }
   }
 
-  async obterTarefa(req: Request, res: Response) {
+  async getTask(req: Request, res: Response) {
     try {
-      const tarefas = await Tarefa.find();
-      return res.status(200).json(tarefas);
+      const task = await Task.find();
+      return res.status(200).json(task);
     } catch (error) {
       return res.status(500).json({ error: "Erro ao obter tarefa." });
     }
   }
 
-  async atualizarTarefa(req: Request, res: Response) {
+  async updateTask(req: Request, res: Response) {
     try {
       const id = req.params.id;
-      const tarefaAtualizada = await Tarefa.findByIdAndUpdate(id, req.body, {
+      const taskUpdated = await Task.findByIdAndUpdate(id, req.body, {
         new: true,
       });
-      if (!tarefaAtualizada) {
+      if (!taskUpdated) {
         return res.status(404).json({ error: "Tarefa não encontrada." });
       }
-      return res.status(200).json(tarefaAtualizada);
+      return res.status(200).json(taskUpdated);
     } catch (error) {
       return res.status(500).json({ error: "Erro ao atualizar tarefa." });
     }
   }
 
-  async excluirTarefa(req: Request, res: Response) {
+  async deleteTask(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const tarefaExcluida = await Tarefa.findByIdAndDelete(id);
-      if (!tarefaExcluida) {
+      const taskDeleted = await Task.findByIdAndDelete(id);
+      if (!taskDeleted) {
         return res.status(404).json({ error: "Tarefa não encontrada." });
       }
       return res.status(200).json({ message: "Tarefa excluida com sucesso" });
@@ -49,4 +49,4 @@ class TarefaController {
   }
 }
 
-export default TarefaController;
+export default TaskController;

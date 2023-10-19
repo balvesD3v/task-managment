@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const tarefaSchema = new mongoose.Schema(
+const taskSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
@@ -11,6 +11,6 @@ const tarefaSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-const Tarefa = mongoose.model("Tarefa", tarefaSchema);
+const Task = mongoose.model("Tarefa", taskSchema);
 
-export default Tarefa;
+export default Task;

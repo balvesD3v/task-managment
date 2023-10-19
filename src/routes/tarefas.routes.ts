@@ -1,13 +1,13 @@
 import { Router } from "express";
-import TarefaController from "../controllers/TarefaController";
+import TaskController from "../controllers/TaskController";
 
-const tarefasRoutes = Router();
+const tasksRoutes = Router();
 
-const tarefasController = new TarefaController();
+const taskController = new TaskController();
 
-tarefasRoutes.post("/", tarefasController.criarTarefa);
-tarefasRoutes.get("/", tarefasController.obterTarefa);
-tarefasRoutes.put("/:id", tarefasController.atualizarTarefa);
-tarefasRoutes.delete("/:id", tarefasController.excluirTarefa);
+tasksRoutes.post("/", taskController.createTask);
+tasksRoutes.get("/", taskController.getTask);
+tasksRoutes.put("/:id", taskController.updateTask);
+tasksRoutes.delete("/:id", taskController.deleteTask);
 
-export default tarefasRoutes;
+export default tasksRoutes;
