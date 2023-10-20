@@ -29,6 +29,7 @@ class TaskController {
       if (!taskUpdated) {
         return res.status(404).json({ error: "Tarefa não encontrada." });
       }
+
       return res.status(200).json(taskUpdated);
     } catch (error) {
       return res.status(500).json({ error: "Erro ao atualizar tarefa." });

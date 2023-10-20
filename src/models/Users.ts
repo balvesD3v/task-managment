@@ -1,6 +1,14 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const usersSchema = new mongoose.Schema(
+import { hash } from "bcrypt";
+
+interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+}
+
+const usersSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
     email: {
@@ -18,6 +26,18 @@ const usersSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-const User = mongoose.model("User", usersSchema);
+usersSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  try {
+    const hashedpassword = await hash(this.password, 10);
+    this.password = hashedpassword;
+    next();
+  } catch (error: any) {
+    return next(error);
+  }
+});
+
+const User = mongoose.model<IUser>("User", usersSchema);
 
 export default User;

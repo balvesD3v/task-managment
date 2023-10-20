@@ -19,8 +19,6 @@ export function userAuthenticated(
     return res.status(401).json({ error: "JWT TOKEN não informado!" });
   }
 
-  console.log(authHeader);
-
   const [, token] = authHeader.split(" ");
 
   try {

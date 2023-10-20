@@ -6,17 +6,15 @@ class UserController {
   async createUser(req: Request, res: Response) {
     const { name, email, password } = req.body;
 
-    const hashedpassword = await hash(password, 10);
-
     try {
       const checkUserExists = await User.findOne({ email: email });
       if (checkUserExists) {
-        return res.status(500).json({ message: "Este usuário já existe" });
+        return res.status(400).json({ message: "Este usuário já existe" });
       } else {
         const newUser = new User({
           name,
           email,
-          password: hashedpassword,
+          password,
         });
         await newUser.save();
 
@@ -33,28 +31,28 @@ class UserController {
     const { email, newName, newEmail, newPassword } = req.body;
 
     try {
-      const user = await User.findOne({ email: email });
+      const user = await User.findOne({ email });
 
       if (!user) {
         return res.status(400).json({ message: "Usuário não existe" });
       }
 
       if (newName) {
-        user.name = newName;
+        await User.findOneAndUpdate({ name: newName });
       }
 
-      if (newEmail) {
+      if (newEmail && newEmail !== email) {
         const emailExists = await User.findOne({ email: email });
         if (emailExists && emailExists._id.toString() !== user._id.toString()) {
           return res.status(400).json({ message: "Esté email já está em uso" });
         }
-        user.email = newEmail;
+        await User.findOneAndUpdate({ email: newEmail });
       }
 
-      if (newEmail === user.email) {
-        return res.status(400).json({
-          message: "O novo e-mail deve ser diferente do e-mail atual",
-        });
+      if (newEmail == email) {
+        return res
+          .status(400)
+          .json({ message: "Email novo deve ser diferente do antigo" });
       }
 
       if (newPassword) {
@@ -65,15 +63,19 @@ class UserController {
             .json({ message: "Nova senha não pode ser igual à senha atual" });
         }
         const hashedpassword = await hash(newPassword, 10);
-        user.password = hashedpassword;
+        await User.findOneAndUpdate({ password: hashedpassword });
       }
 
       await user.save();
 
       return res.status(200).json({
-        message: `${newEmail}  ${newPassword}  ${newName}  ${email}  "Usuário atualizado com sucesso"`,
+        message: `Usuário atualizado com sucesso`,
       });
-    } catch (error) {}
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: "Erro ao atualizar o usuário no banco de dados" });
+    }
   }
 }
 
