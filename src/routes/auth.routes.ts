@@ -5,6 +5,8 @@ import { userAuthenticated } from "../middlewares/userAuthenticated";
 const authRoutes = Router();
 const authController = new AuthController();
 
-authRoutes.post("/", userAuthenticated, authController.login);
+authRoutes.post("/", authController.login);
+authRoutes.post("/logout", userAuthenticated, authController.logout);
+authRoutes.post("/forgot", userAuthenticated, authController.forgotPassword);
 
 export default authRoutes;
